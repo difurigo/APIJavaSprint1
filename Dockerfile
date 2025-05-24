@@ -1,23 +1,12 @@
-#Buildar projeto maven 
-FROM maven:3.9.4-eclipse-temurin AS build
+# Etapa 1: Build
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
-
-#Copiar arquivos para o container
 COPY . .
+RUN mvn clean package -DskipTests
 
-#Compila o projeto e gera o JAR
-RUN mvn clean package -Dskiptests
-
-#Selecionado imagem mais leve para rodar o projeto java
-FROM eclipse-temurin:17-jdk-jammy
+# Etapa 2: Runtime
+FROM openjdk:17-jdk-slim
 WORKDIR /app
-
-#Copiar o JAR gerado no build anterior
-COPY --from=build /app/target/*.jar app.jar
-
-# Executa com usuário sem privilégios
+COPY --from=builder /app/target/*.jar app.jar
 USER nobody
-
-#Expor porta para comunicação
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
