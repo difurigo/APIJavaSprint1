@@ -1,6 +1,13 @@
-FROM eclipse-temurin:17-jdk-alpine
+# Etapa de build
+FROM maven:3.8.5-openjdk-17-slim AS builder
 WORKDIR /app
-COPY target/*.jar app.jar
-VOLUME /app/data
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Etapa de execução
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+USER nobody
+CMD ["java", "-jar", "app.jar"]
