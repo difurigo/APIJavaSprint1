@@ -1,13 +1,17 @@
-# Etapa de build
-FROM maven:3.8.5-openjdk-17-slim AS builder
-WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
-
-# Etapa de execução
 FROM openjdk:17-jdk-slim
+
 WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
+
+COPY target/*.jar app.jar
+
+# Cria usuário sem privilégios administrativos
+RUN addgroup --system appuser && adduser --system --ingroup appuser appuser
+
+# Cria o diretório de dados com permissão para o usuário
+RUN mkdir -p /app/data && chown appuser:appuser /app/data
+
+USER appuser
+
 EXPOSE 8080
-USER nobody
+
 CMD ["java", "-jar", "app.jar"]
