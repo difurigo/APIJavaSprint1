@@ -150,7 +150,7 @@ SELECT * FROM COLABORADORES;
 
 - **Lu Vieira Santos** – RM: 558935  
 - **Melissa Perreira** – RM: 555656  
-- **Diego Furigo do Nascimento** – RM: 555656  
+- **Diego Furigo do Nascimento** – RM: 558755  
 
 ---
 
